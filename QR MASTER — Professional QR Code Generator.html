@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>QR MASTER — Professional QR Code Generator</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{--bg:#080B14;--bg2:#101729;--blue:#2878FF;--neon:#00C8FF;--pur:#8157FF;--tx:#F5F7FF;--tx2:#9AA7BD;--gl:rgba(255,255,255,.05);--bd:rgba(255,255,255,.1);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{margin:0;background:radial-gradient(800px 500px at 10% -5%,rgba(40,120,255,.25),transparent),radial-gradient(700px 500px at 95% 10%,rgba(129,87,255,.22),transparent),var(--bg);color:var(--tx);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5}
+header{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;padding:14px 5vw;background:rgba(8,11,20,.75);backdrop-filter:blur(14px);border-bottom:1px solid var(--bd)}
+.logo{font-weight:800;letter-spacing:.08em;font-size:18px;display:flex;align-items:center;gap:10px}
+.logo i{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--blue),var(--pur));display:grid;place-items:center;box-shadow:0 0 18px rgba(0,200,255,.5);font-style:normal;font-size:16px}
+nav a{color:var(--tx2);text-decoration:none;margin-left:22px;font-size:14px;transition:.2s}nav a:hover{color:var(--neon)}
+.hero{text-align:center;padding:90px 5vw 50px}
+.hero h1{font-size:clamp(34px,6vw,64px);margin:0 0 14px;line-height:1.1;background:linear-gradient(90deg,#fff,var(--neon) 50%,var(--pur));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--tx2);font-size:18px;margin:0 0 30px}
+.btn{border:0;cursor:pointer;color:#fff;font:600 15px inherit;padding:13px 26px;border-radius:14px;background:linear-gradient(135deg,var(--blue),var(--pur));box-shadow:0 8px 30px rgba(40,120,255,.4);transition:.25s;text-decoration:none;display:inline-block}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 36px rgba(0,200,255,.5)}
+.btn.sec{background:var(--gl);border:1px solid var(--bd);box-shadow:none;padding:10px 16px;font-size:13px}
+.btn.sec:hover{border-color:var(--neon)}
+section{padding:40px 5vw;max-width:1280px;margin:auto}
+h2{font-size:28px;margin:0 0 6px}.sub{color:var(--tx2);margin:0 0 24px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.card{background:var(--gl);border:1px solid var(--bd);border-radius:18px;padding:20px 12px;text-align:center;cursor:pointer;backdrop-filter:blur(10px);transition:.25s;color:var(--tx);font:600 14px inherit}
+.card span{display:block;font-size:30px;margin-bottom:8px}
+.card:hover{transform:translateY(-4px);border-color:var(--neon);box-shadow:0 0 24px rgba(0,200,255,.25)}
+.card.on{border-color:var(--neon);background:linear-gradient(160deg,rgba(40,120,255,.28),rgba(129,87,255,.22));box-shadow:0 0 28px rgba(0,200,255,.35)}
+.ws{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:24px}
+.panel{background:var(--gl);border:1px solid var(--bd);border-radius:22px;padding:22px;backdrop-filter:blur(14px)}
+.panel h3{margin:0 0 14px;font-size:17px;color:var(--neon)}
+label{display:block;font-size:12px;color:var(--tx2);margin:12px 0 5px}
+input,textarea,select{width:100%;background:var(--bg2);color:var(--tx);border:1px solid var(--bd);border-radius:11px;padding:11px 13px;font:14px inherit;outline:0;transition:.2s}
+input:focus,textarea:focus,select:focus{border-color:var(--neon);box-shadow:0 0 0 3px rgba(0,200,255,.15)}
+input[type=color]{padding:3px;height:40px;cursor:pointer}input[type=range]{padding:0;accent-color:var(--neon)}input[type=checkbox]{width:auto;margin-right:8px}
+textarea{min-height:90px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.msg{margin-top:14px;font-size:13px;padding:10px 13px;border-radius:11px;display:none}
+.err{display:block;background:rgba(255,80,100,.12);color:#ff8a98;border:1px solid rgba(255,80,100,.3)}
+.warn{display:block;background:rgba(255,190,60,.1);color:#ffd27a;border:1px solid rgba(255,190,60,.3)}
+.pv{display:grid;place-items:center;min-height:340px;border-radius:18px;background:repeating-conic-gradient(#1a2238 0 25%,#141b2e 0 50%) 0 0/20px 20px;padding:18px;position:relative;overflow:hidden}
+.pv svg{max-width:100%;height:auto;border-radius:10px;box-shadow:0 0 40px rgba(0,200,255,.3);animation:pop .45s ease}
+.pv.empty svg{display:none}.pv.empty:after{content:"Fill the form to see your QR code";color:var(--tx2);font-size:14px}
+@keyframes pop{from{opacity:.2;transform:scale(.92)}to{opacity:1;transform:none}}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.tpl{display:flex;flex-wrap:wrap;gap:8px}
+.tpl button{width:38px;height:38px;border-radius:10px;border:2px solid var(--bd);cursor:pointer;transition:.2s}.tpl button:hover{border-color:var(--neon);transform:scale(1.1)}
+.chk{display:flex;align-items:center;font-size:13px;color:var(--tx2);margin-top:12px}
+.about p,footer p{color:var(--tx2)}
+footer{margin-top:40px;padding:30px 5vw;border-top:1px solid var(--bd);text-align:center;font-size:13px;color:var(--tx2)}
+footer details{max-width:640px;margin:10px auto;text-align:left;background:var(--gl);border:1px solid var(--bd);border-radius:12px;padding:10px 14px}
+footer summary{cursor:pointer;color:var(--tx)}
+::selection{background:var(--pur);color:#fff}::-webkit-scrollbar{width:10px}::-webkit-scrollbar-thumb{background:linear-gradient(var(--blue),var(--pur));border-radius:10px}::-webkit-scrollbar-track{background:var(--bg)}
+.orb{position:fixed;border-radius:50%;filter:blur(90px);opacity:.35;z-index:-1;pointer-events:none;animation:fl 14s ease-in-out infinite alternate}.o1{width:420px;height:420px;background:var(--blue);top:10%;left:-120px}.o2{width:380px;height:380px;background:var(--pur);bottom:5%;right:-100px;animation-delay:-6s}.o3{width:260px;height:260px;background:var(--neon);top:55%;left:40%;opacity:.12;animation-delay:-3s}@keyframes fl{to{transform:translate(60px,-80px) scale(1.2)}}
+@keyframes up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}@keyframes sh{to{background-position:200% 0}}@keyframes pl{50%{box-shadow:0 0 34px rgba(0,200,255,.9)}}
+.logo i{animation:pl 3s infinite}.hero>*,section{animation:up .8s both}.hero>:nth-child(2){animation-delay:.1s}.hero>:nth-child(3){animation-delay:.2s}.hero>:nth-child(4){animation-delay:.3s}.hero>:nth-child(5){animation-delay:.4s}
+.hero h1{background:linear-gradient(90deg,#fff,var(--neon),var(--pur),var(--neon),#fff);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:up .8s both,sh 6s linear infinite;letter-spacing:-.02em}
+.badge{display:inline-block;padding:7px 16px;border-radius:99px;font-size:13px;color:var(--neon);background:rgba(0,200,255,.08);border:1px solid rgba(0,200,255,.35);margin-bottom:22px;box-shadow:0 0 20px rgba(0,200,255,.15)}
+.chips{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:32px}.chips span{padding:8px 16px;border-radius:99px;font-size:13px;color:var(--tx2);background:var(--gl);border:1px solid var(--bd);backdrop-filter:blur(8px)}
+.btn{position:relative;overflow:hidden}.btn:not(.sec):after{content:'';position:absolute;top:0;left:-70%;width:50%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg);transition:.6s}.btn:not(.sec):hover:after{left:130%}
+h2{font-size:32px;letter-spacing:-.01em}h2:after{content:'';display:block;width:60px;height:4px;border-radius:4px;margin-top:10px;background:linear-gradient(90deg,var(--neon),var(--pur))}
+.card{padding:22px 12px;background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.02));border-radius:22px}
+.card span{width:56px;height:56px;margin:0 auto 12px;border-radius:17px;display:grid;place-items:center;font-size:26px;background:linear-gradient(135deg,rgba(40,120,255,.35),rgba(129,87,255,.35));box-shadow:inset 0 0 0 1px rgba(255,255,255,.14),0 0 22px rgba(0,200,255,.15);transition:.3s}.card:hover span,.card.on span{transform:scale(1.12) rotate(-6deg);box-shadow:inset 0 0 0 1px rgba(255,255,255,.25),0 0 30px rgba(0,200,255,.5)}
+.panel{border:1px solid transparent;border-radius:26px;background:linear-gradient(160deg,rgba(18,26,48,.92),rgba(12,18,34,.8)) padding-box,linear-gradient(135deg,rgba(0,200,255,.45),rgba(129,87,255,.12) 50%,rgba(40,120,255,.45)) border-box;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.panel h3{display:flex;align-items:center;gap:10px;font-size:18px;color:var(--tx)}.panel h3:before{content:'';width:8px;height:22px;border-radius:6px;background:linear-gradient(var(--neon),var(--pur));box-shadow:0 0 12px var(--neon)}
+input,textarea,select{background:rgba(8,11,20,.7)}
+.pv{min-height:380px;border-radius:22px;border:1px solid rgba(0,200,255,.25);box-shadow:inset 0 0 60px rgba(40,120,255,.12)}.pv svg{border-radius:14px;box-shadow:0 0 0 6px rgba(255,255,255,.06),0 0 60px rgba(0,200,255,.35),0 20px 50px rgba(0,0,0,.5)}
+.tpl button{width:44px;height:44px;border-radius:13px}
+.btns .btn:not(.sec){padding:11px 20px;font-size:14px}
+footer{background:linear-gradient(transparent,rgba(16,23,41,.8))}
+@media(max-width:860px){.ws{grid-template-columns:1fr}nav a{margin-left:12px}.hero{padding-top:60px}}
+</style>
+</head>
+<body>
+<div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+<header><div class="logo"><i>▦</i>QR MASTER</div><nav><a href="#home">Home</a><a href="#create">Create QR</a><a href="#about">About QR MASTER</a></nav></header>
+<div class="hero" id="home"><div class="badge">✦ Free · Private · No sign-up</div><h1>Create Your Perfect QR Code</h1><p>Generate, customize and download QR codes in seconds.</p><a class="btn" href="#create">Create QR Code</a><div class="chips"><span>⚡ Instant preview</span><span>🔒 100% local</span><span>🎨 Fully customizable</span><span>⬇ PNG · JPG · SVG · PDF</span></div></div>
+<section id="create">
+<h2>Choose QR type</h2><p class="sub">Eleven categories, each with its own validated form.</p>
+<div class="grid" id="cats"></div>
+<div class="ws">
+<div>
+<div class="panel"><h3 id="ttl">Website</h3><div id="form"></div><div class="msg" id="msg"></div></div>
+<div class="panel" style="margin-top:20px"><h3>Customization studio</h3>
+<label>Ready-made templates</label><div class="tpl" id="tpl"></div>
+<div class="row"><div><label>Foreground</label><input type="color" id="fg" value="#000000"></div><div><label>Background</label><input type="color" id="bg" value="#ffffff"></div></div>
+<div class="chk"><input type="checkbox" id="gr"><label style="margin:0">Gradient</label><input type="color" id="g2" value="#8157ff" style="margin-left:12px;width:60px"></div>
+<div class="chk"><input type="checkbox" id="tr"><label style="margin:0">Transparent background</label></div>
+<div class="row"><div><label>Dot style</label><select id="dot"><option value="sq">Square</option><option value="rd">Rounded</option><option value="ci">Dots</option></select></div><div><label>Eye / frame style</label><select id="eye"><option value="sq">Square</option><option value="rd">Rounded</option><option value="ci">Circle</option></select></div></div>
+<div class="row"><div><label>Error correction</label><select id="ec"><option>L</option><option selected>M</option><option>Q</option><option>H</option></select></div><div><label>Size: <b id="szv">400</b> px</label><input type="range" id="sz" min="200" max="1000" step="50" value="400"></div></div>
+<label>Center logo / image (stays in your browser)</label><input type="file" id="lf" accept="image/*">
+<label>Logo size: <b id="lsv">20</b>%</label><input type="range" id="ls" min="10" max="28" value="20">
+<div class="btns"><button class="btn sec" id="rmlogo">Remove logo</button><button class="btn sec" id="reset">Reset design</button></div>
+</div></div>
+<div class="panel" style="align-self:start;position:sticky;top:80px"><h3>Live preview</h3>
+<div class="pv empty" id="pv"></div><div class="msg" id="cw"></div>
+<div class="btns"><button class="btn sec" id="regen">↻ Regenerate</button><button class="btn" data-f="png">PNG</button><button class="btn" data-f="jpg">JPG</button><button class="btn" data-f="svg">SVG</button><button class="btn" data-f="pdf">PDF</button></div>
+<p style="font-size:12px;color:var(--tx2);margin:14px 0 0">Downloads contain the generated QR code only. Always test a code with a real scanner before printing.</p></div>
+</div></section>
+<section class="about" id="about"><h2>About QR MASTER</h2><p>QR MASTER does one thing: it creates QR codes. Everything runs locally in your browser — your content is never uploaded. Choose a type, style it, check the live preview and download in PNG, JPG, SVG or print-ready PDF.</p></section>
+<footer><b style="color:var(--tx)">QR MASTER</b>
+<details><summary>Privacy information</summary><p>QR codes are generated locally in your browser. Nothing you type and no logo you upload is sent to any server. Do not encode passwords or sensitive personal data into QR codes you share publicly — anyone can scan them.</p></details>
+<details><summary>Terms of use</summary><p>QR MASTER is provided as is. You are responsible for the content you encode and for testing codes before use. Do not use it for unlawful or misleading purposes.</p></details>
+<p>© 2026 QR MASTER. All rights reserved.</p></footer>
+<script>
+const $=id=>document.getElementById(id);
+try{qrcode.stringToBytes=qrcode.stringToBytesFuncs['UTF-8']}catch(e){}
+const need=(v,l)=>{v=(v||'').trim();if(!v)throw Error(l+' is required');return v};
+const ph=(cc,n)=>{cc=String(cc||'').replace(/\D/g,'');n=String(n||'').replace(/[\s\-().]/g,'');if(!/^\d{1,4}$/.test(cc))throw Error('Enter a valid country code, e.g. 998');if(!/^\d{4,12}$/.test(n))throw Error('Enter a valid phone number (digits only)');return cc+n};
+const url=(v,l)=>{v=need(v,l);if(!/^[a-z][a-z0-9+.-]*:\/\//i.test(v))v='https://'+v;let u;try{u=new URL(v)}catch(e){throw Error('Enter a valid URL')}if(!/^https?:$/.test(u.protocol)||!u.hostname.includes('.'))throw Error('Enter a valid http(s) URL');return u.href};
+const user=(v,l,h)=>{v=need(v,l);if(/^(https?:\/\/)/i.test(v)||v.includes(h))return url(v,l);v=v.replace(/^@/,'');if(!/^[A-Za-z0-9_.]{3,32}$/.test(v))throw Error('Enter a valid username or link');return v};
+const esc=s=>s.replace(/([\\;,:"])/g,'\\$1');
+const CC={k:'cc',l:'Country code',p:'998',v:'998'};
+const T={
+website:{i:'🌐',n:'Website',f:[{k:'u',l:'Website URL',p:'https://example.com'}],b:v=>url(v.u,'URL')},
+text:{i:'📝',n:'Text',f:[{k:'t',l:'Text',t:'ta',p:'Type any text, in any language…'}],b:v=>need(v.t,'Text')},
+wifi:{i:'📶',n:'Wi-Fi',f:[{k:'s',l:'Network name (SSID)'},{k:'p',l:'Password'},{k:'x',l:'Security',t:'sel',o:[['WPA','WPA/WPA2'],['WEP','WEP'],['nopass','Open network']]}],b:v=>{const s=need(v.s,'Network name'),x=v.x||'WPA';if(x!='nopass'&&!v.p)throw Error('Password is required for secured networks');return`WIFI:T:${x};S:${esc(s)};${x=='nopass'?'':'P:'+esc(v.p)+';'};`}},
+phone:{i:'📞',n:'Phone',f:[CC,{k:'n',l:'Phone number',p:'90 123 45 67'}],b:v=>'tel:+'+ph(v.cc,v.n)},
+email:{i:'✉️',n:'Email',f:[{k:'e',l:'Email address'},{k:'s',l:'Subject'},{k:'m',l:'Message',t:'ta'}],b:v=>{const e=need(v.e,'Email');if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e))throw Error('Enter a valid email address');const q=[];if(v.s)q.push('subject='+encodeURIComponent(v.s));if(v.m)q.push('body='+encodeURIComponent(v.m));return'mailto:'+e+(q.length?'?'+q.join('&'):'')}},
+sms:{i:'💬',n:'SMS',f:[CC,{k:'n',l:'Phone number'},{k:'m',l:'Message',t:'ta'}],b:v=>'SMSTO:+'+ph(v.cc,v.n)+':'+(v.m||'')},
+whatsapp:{i:'🟢',n:'WhatsApp',f:[CC,{k:'n',l:'Phone number'},{k:'m',l:'Message (optional)',t:'ta'}],b:v=>'https://wa.me/'+ph(v.cc,v.n)+(v.m?'?text='+encodeURIComponent(v.m):'')},
+telegram:{i:'✈️',n:'Telegram',f:[{k:'u',l:'Username or Telegram link',p:'@username or https://t.me/…'}],b:v=>{const r=user(v.u,'Username','t.me');return r.startsWith('http')?r:'https://t.me/'+r}},
+instagram:{i:'📸',n:'Instagram',f:[{k:'u',l:'Username or profile URL',p:'@username'}],b:v=>{const r=user(v.u,'Username','instagram.com');return r.startsWith('http')?r:'https://instagram.com/'+r}},
+vcard:{i:'👤',n:'Business Card',f:[{k:'n',l:'Full name'},{k:'p',l:'Phone',p:'+998901234567'},{k:'e',l:'Email'},{k:'c',l:'Company'},{k:'j',l:'Job title'},{k:'w',l:'Website'},{k:'a',l:'Address'}],b:v=>{const n=need(v.n,'Full name');if(!v.p&&!v.e)throw Error('Enter a phone or an email');if(v.p&&!/^\+?[\d\s\-()]{5,20}$/.test(v.p))throw Error('Enter a valid phone number');if(v.e&&!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.e))throw Error('Enter a valid email address');const e=s=>s.replace(/([,;\\])/g,'\\$1').replace(/\n/g,'\\n'),p=n.split(/\s+/);let o=['BEGIN:VCARD','VERSION:3.0','N:'+e(p.slice(1).join(' '))+';'+e(p[0])+';;;','FN:'+e(n)];if(v.c)o.push('ORG:'+e(v.c));if(v.j)o.push('TITLE:'+e(v.j));if(v.p)o.push('TEL;TYPE=CELL:'+v.p.replace(/[\s\-()]/g,''));if(v.e)o.push('EMAIL:'+v.e);if(v.w)o.push('URL:'+url(v.w,'Website'));if(v.a)o.push('ADR:;;'+e(v.a)+';;;;');o.push('END:VCARD');return o.join('\n')}},
+location:{i:'📍',n:'Location / Map',f:[{k:'q',l:'Address or latitude, longitude',p:'41.3111, 69.2797'},{k:'l',l:'Or map link (optional)',p:'https://maps.google.com/…'}],b:v=>{if(v.l&&v.l.trim())return url(v.l,'Map link');const q=need(v.q,'Address or coordinates'),m=q.match(/^(-?\d+(?:\.\d+)?)\s*[,;\s]\s*(-?\d+(?:\.\d+)?)$/);if(m){if(Math.abs(m[1])>90||Math.abs(m[2])>180)throw Error('Coordinates are out of range');return`geo:${m[1]},${m[2]}`}return'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q)}}
+};
+const D={fg:'#000000',bg:'#ffffff',g2:'#8157ff',gr:false,tr:false,dot:'sq',eye:'sq',ec:'M',sz:400,ls:20};
+const TPL=[['#000000','#ffffff',0,'sq','sq'],['#2878FF','#ffffff','#8157FF','rd','rd'],['#0a1a3a','#e8f6ff','#00a2d6','ci','ci'],['#8157FF','#f4f0ff','#2878FF','rd','ci'],['#111111','#ffe14d',0,'sq','rd'],['#0b6b4f','#eafff6','#00c8a0','ci','rd']];
+let cur='website',vals={},st={...D},logo=null,svgStr='';
+$('cats').innerHTML=Object.entries(T).map(([k,t])=>`<button class="card" data-k="${k}"><span>${t.i}</span>${t.n}</button>`).join('');
+$('tpl').innerHTML=TPL.map((t,i)=>`<button data-i="${i}" style="background:linear-gradient(135deg,${t[0]},${t[2]||t[0]});box-shadow:inset 0 0 0 4px ${t[1]}" title="Template ${i+1}"></button>`).join('');
+function pick(k){cur=k;vals[k]=vals[k]||{};document.querySelectorAll('.card').forEach(c=>c.classList.toggle('on',c.dataset.k==k));const t=T[k];$('ttl').textContent=t.n;
+$('form').innerHTML=t.f.map(f=>{const id='f_'+f.k,v=vals[k][f.k]!=null?vals[k][f.k]:(f.v||'');const a=`id="${id}" data-k="${f.k}" placeholder="${f.p||''}"`;return`<label for="${id}">${f.l}</label>`+(f.t=='ta'?`<textarea ${a}>${v}</textarea>`:f.t=='sel'?`<select ${a}>${f.o.map(o=>`<option value="${o[0]}"${v==o[0]?' selected':''}>${o[1]}</option>`).join('')}</select>`:`<input ${a} value="${v.replace(/"/g,'&quot;')}">`)}).join('');
+t.f.forEach(f=>{if(f.v&&vals[k][f.k]==null)vals[k][f.k]=f.v});render()}
+const lum=h=>{const c=[1,3,5].map(i=>{let x=parseInt(h.substr(i,2),16)/255;return x<=.03928?x/12.92:Math.pow((x+.055)/1.055,2.4)});return .2126*c[0]+.7152*c[1]+.0722*c[2]};
+function rr(x,y,s,r){return r?`M${x+r} ${y}h${s-2*r}a${r} ${r} 0 0 1 ${r} ${r}v${s-2*r}a${r} ${r} 0 0 1 -${r} ${r}h-${s-2*r}a${r} ${r} 0 0 1 -${r} -${r}v-${s-2*r}a${r} ${r} 0 0 1 ${r} -${r}z`:`M${x} ${y}h${s}v${s}h-${s}z`}
+function make(data){const q=qrcode(0,logo?'H':st.ec);q.addData(data);q.make();const n=q.getModuleCount(),m=4,T=n+2*m,fill=st.gr?'url(#g)':st.fg;
+const half=logo?n*st.ls/200+.5:0,c=(n-1)/2,E=st.eye=='sq'?[0,0,0]:st.eye=='rd'?[1.8,.9,.9]:[3.5,2.5,1.5];
+let o=`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 ${T} ${T}" width="${st.sz}" height="${st.sz}" shape-rendering="${st.dot=='sq'?'crispEdges':'auto'}"><defs><linearGradient id="g" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="${T}" y2="${T}"><stop offset="0" stop-color="${st.fg}"/><stop offset="1" stop-color="${st.g2}"/></linearGradient></defs>`;
+if(!st.tr)o+=`<rect width="${T}" height="${T}" fill="${st.bg}"/>`;
+o+=`<g fill="${fill}">`;
+for(let r=0;r<n;r++)for(let k=0;k<n;k++){if(!q.isDark(r,k))continue;if((r<7&&k<7)||(r<7&&k>=n-7)||(r>=n-7&&k<7))continue;if(logo&&Math.abs(r-c)<half&&Math.abs(k-c)<half)continue;const x=k+m,y=r+m;o+=st.dot=='ci'?`<circle cx="${x+.5}" cy="${y+.5}" r=".5"/>`:st.dot=='rd'?`<rect x="${x}" y="${y}" width="1.02" height="1.02" rx=".35"/>`:`<rect x="${x}" y="${y}" width="1.02" height="1.02"/>`}
+[[0,0],[n-7,0],[0,n-7]].forEach(([a,b])=>{const x=a+m,y=b+m;o+=`<path fill-rule="evenodd" d="${rr(x,y,7,E[0])+rr(x+1,y+1,5,E[1])}"/><path d="${rr(x+2,y+2,3,E[2])}"/>`});
+o+='</g>';
+if(logo){const s=T*st.ls/100,p=s*.12,x=(T-s)/2;o+=`<rect x="${x-p}" y="${x-p}" width="${s+2*p}" height="${s+2*p}" rx="${s*.15}" fill="${st.tr?'#fff':st.bg}"/><image x="${x}" y="${x}" width="${s}" height="${s}" preserveAspectRatio="xMidYMid meet" href="${logo}" xlink:href="${logo}"/>`}
+return o+'</svg>'}
+function show(el,cls,t){el.className='msg '+(cls||'');el.textContent=t||''}
+function render(){const t=T[cur],pv=$('pv');let data;try{data=t.b(vals[cur]);show($('msg'));}catch(e){show($('msg'),'err',e.message);pv.classList.add('empty');svgStr='';return}
+try{svgStr=make(data)}catch(e){show($('msg'),'err','Content is too long for a QR code at this error-correction level. Shorten it or lower the level.');pv.classList.add('empty');svgStr='';return}
+pv.classList.remove('empty');const old=pv.querySelector('svg');if(old)old.remove();pv.insertAdjacentHTML('afterbegin',svgStr);
+const a=st.gr?[st.fg,st.g2]:[st.fg],bgL=st.tr?1:lum(st.bg),w=[];
+if(a.some(f=>{const l=lum(f),hi=Math.max(l,bgL)+.05,lo=Math.min(l,bgL)+.05;return hi/lo<3}))w.push('Low contrast — this QR code may not scan.');
+if(!st.tr&&lum(st.fg)>bgL)w.push('Light-on-dark codes are not read by some scanners.');
+show($('cw'),w.length?'warn':'',w.join(' '))}
+$('form').addEventListener('input',e=>{const k=e.target.dataset.k;if(k){vals[cur][k]=e.target.value;render()}});
+$('cats').addEventListener('click',e=>{const c=e.target.closest('.card');if(c){pick(c.dataset.k)}});
+const bind={fg:'fg',bg:'bg',g2:'g2',gr:'gr',tr:'tr',dot:'dot',eye:'eye',ec:'ec',sz:'sz',ls:'ls'};
+Object.keys(bind).forEach(k=>$(k).addEventListener('input',()=>{const e=$(k);st[k]=e.type=='checkbox'?e.checked:(e.type=='range'?+e.value:e.value);$('szv').textContent=st.sz;$('lsv').textContent=st.ls;render()}));
+function sync(){Object.keys(bind).forEach(k=>{const e=$(k);if(e.type=='checkbox')e.checked=st[k];else e.value=st[k]});$('szv').textContent=st.sz;$('lsv').textContent=st.ls}
+$('tpl').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const t=TPL[b.dataset.i];Object.assign(st,{fg:t[0],bg:t[1],g2:t[2]||'#8157ff',gr:!!t[2],tr:false,dot:t[3],eye:t[4]});sync();render()});
+$('reset').onclick=()=>{st={...D};logo=null;$('lf').value='';sync();render()};
+$('rmlogo').onclick=()=>{logo=null;$('lf').value='';render()};
+$('regen').onclick=render;
+$('lf').onchange=e=>{const f=e.target.files[0];if(!f)return;if(!f.type.startsWith('image/')){show($('msg'),'err','Please choose an image file');return}const r=new FileReader();r.onload=()=>{logo=r.result;if(st.ec!='H'){st.ec='H';$('ec').value='H'}render()};r.readAsDataURL(f)};
+function save(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}
+function raster(type){return new Promise((res,rej)=>{const im=new Image(),px=Math.max(st.sz,600);im.onload=()=>{const c=document.createElement('canvas');c.width=c.height=px;const x=c.getContext('2d');if(type!='png'||false){x.fillStyle='#fff';x.fillRect(0,0,px,px)}x.drawImage(im,0,0,px,px);res(c)};im.onerror=()=>rej(Error('Render failed'));im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svgStr.replace(/width="\d+" height="\d+"/,`width="${px}" height="${px}"`))})}
+document.querySelectorAll('[data-f]').forEach(b=>b.onclick=async()=>{if(!svgStr){show($('msg'),'err',$('msg').textContent||'Complete the form first');return}const f=b.dataset.f,nm='qr-master-'+cur;
+try{if(f=='svg')save(new Blob([svgStr],{type:'image/svg+xml'}),nm+'.svg');
+else{const c=await raster(f=='jpg'?'jpg':f=='pdf'?'jpg':'png');
+if(f=='png')c.toBlob(b=>save(b,nm+'.png'),'image/png');
+else if(f=='jpg')c.toBlob(b=>save(b,nm+'.jpg'),'image/jpeg',.95);
+else{const P=new jspdf.jsPDF({unit:'mm',format:'a4'});P.setFontSize(18);P.text('QR MASTER — '+T[cur].n,105,28,{align:'center'});P.addImage(c.toDataURL('image/jpeg',.95),'JPEG',45,45,120,120);P.setFontSize(9);P.setTextColor(120);P.text('Generated with QR MASTER',105,175,{align:'center'});P.save(nm+'.pdf')}}}
+catch(e){show($('msg'),'err','Download failed: '+e.message)}});
+sync();pick('website');
+</script>
+</body>
+</html>
